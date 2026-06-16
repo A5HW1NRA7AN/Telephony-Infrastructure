@@ -1,0 +1,24 @@
+# --- Terraform ---
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# --- Secrets ---
+*.pem
+*.key
+.env
+
+# --- Dynamic environment files ---
+terraform/env.sh
+terraform/hosts_k8s.yaml
+kubespray/env.sh
+kubespray/hosts_k8s.yaml
+
+# --- Built Artifacts ---
+*.tar
