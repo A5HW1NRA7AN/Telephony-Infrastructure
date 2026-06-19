@@ -38,9 +38,10 @@ resource "aws_instance" "bastion" {
 
 # 2. Private FreeSWITCH Server (Private Subnet)
 resource "aws_instance" "freeswitch" {
-  ami           = data.aws_ami.ubuntu_24_04.id
-  instance_type = var.instance_type
-  key_name      = aws_key_pair.freeswitch_key_pair.key_name
+  ami                  = data.aws_ami.ubuntu_24_04.id
+  instance_type        = var.instance_type
+  key_name             = aws_key_pair.freeswitch_key_pair.key_name
+  iam_instance_profile = "EC2-ECR-Read-Role"
 
   subnet_id              = module.vpc.private_subnets[0]
   private_ip             = "10.0.1.143"

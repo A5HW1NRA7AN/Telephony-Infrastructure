@@ -1,11 +1,11 @@
-# On-Prem Infrastructure
+# Infrastructure
 
 This repository manages AWS cloud resources and Kubernetes cluster bootstrapping configurations for the Telephony project.
 
 ## Project Structure
 
 ```
-On-Prem-Infrastructure/
+Infrastructure/
 ├── .gitignore
 ├── README.md
 ├── terraform/                  # AWS Infrastructure Provisioning
@@ -68,3 +68,9 @@ chmod +x kubespray/deploy_kubespray_local.sh
 ```
 
 This will run the deployment inside a `screen` session on the remote server so that connection drops do not abort the installation.
+
+---
+
+## ECR IAM Role Authentication
+The FreeSWITCH server EC2 instance is configured with the existing IAM instance profile `EC2-ECR-Read-Role`. This allows the Kubernetes container runtime (containerd) to authenticate and pull private Docker images directly from your AWS ECR registries without having to configure local K8s docker-registry secrets (`regcred`).
+
