@@ -1,0 +1,9 @@
+configuration-as-code
+git
+workflow-aggregator
+pipeline-stage-view
+amazon-ecr
+aws-credentials
+kubernetes-cli
+docker-workflow
+pipeline-utility-steps

@@ -67,7 +67,7 @@ resource "local_file" "hosts_k8s_yaml" {
         calico_rr:
           hosts: {}
       vars:
-        ansible_ssh_common_args: '-o ControlMaster=auto -o ControlPersist=30m -o ControlPath=/tmp/ansible-ssh-%h-%p-%r -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i /home/rajan/Projects/Infrastructure/terraform/freeswitch-key.pem -o StrictHostKeyChecking=no -W %h:%p ubuntu@${aws_instance.bastion.public_ip}"'
+        ansible_ssh_common_args: '-o ControlMaster=auto -o ControlPersist=30m -o ControlPath=/tmp/ansible-ssh-%h-%p-%r -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i /home/rajan/Projects/Infrastructure/freeswitch-kubernetes/terraform/freeswitch-key.pem -o StrictHostKeyChecking=no -W %h:%p ubuntu@${aws_instance.bastion.public_ip}"'
   EOT
 }
 
