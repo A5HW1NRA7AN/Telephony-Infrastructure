@@ -1,9 +1,9 @@
 FROM jenkins/jenkins:lts-jdk17
 
-# Run as root to install Docker CLI and AWS CLI
+# Run as root to install Docker CLI, AWS CLI, and Maven
 USER root
 
-# Install dependencies, Docker CLI, and AWS CLI
+# Install dependencies, Docker CLI, AWS CLI, and Maven
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     lsb-release \
     unzip \
+    maven \
     && mkdir -p /etc/apt/keyrings \
     && curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
