@@ -1,11 +1,11 @@
-# Infrastructure
+# Telephony-Infrastructure
 
 This repository manages AWS cloud resources, Kubernetes cluster configurations, and Jenkins setups for the Telephony project. It is structured to support multiple styles of deployment.
 
 ## Repository Structure
 
 ```
-Infrastructure/
+Telephony-Infrastructure/
 ├── README.md
 ├── freeswitch-ec2/             # Standalone EC2 Deployment
 │   └── terraform/              # Terraform scripts (VMs automatically configured with Docker)
