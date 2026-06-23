@@ -31,9 +31,48 @@ credentials:
               username: "${GITHUB_USER}"
               password: "${GITHUB_TOKEN}"
               description: "GitHub API Authentication Token"
+          
+          # SSH Private Key for EC2 remote deployments
+          - basicSSHUserPrivateKey:
+              scope: GLOBAL
+              id: "ssh-private-key"
+              username: "ubuntu"
+              privateKeySource:
+                directEntry:
+                  privateKey: "${SSH_PRIVATE_KEY}"
+              description: "SSH Private Key for EC2 remote deployments"
+
+          # Kubeconfig file for Kubernetes remote deployments
+          - file:
+              scope: GLOBAL
+              id: "kubeconfig"
+              fileName: "kubeconfig"
+              secretBytes: "${KUBECONFIG_CONTENT}"
+              description: "Kubeconfig for Kubernetes remote deployments"
 
 # Automatically create pipeline jobs using Job DSL
 jobs:
+  - script: |
+      pipelineJob('telephony-ec2') {
+        description('Pipeline for the Standalone EC2 Deployment')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
+                  credentialsId('github-credentials')
+                }
+                branch('*/freeswitch')
+              }
+            }
+            scriptPath('Jenkinsfile')
+          }
+        }
+        triggers {
+          scm('H/5 * * * *') // Poll GitHub every 5 minutes
+        }
+      }
   - script: |
       pipelineJob('telephony-missed-call') {
         description('Pipeline for the Missed Call Campaign variant')

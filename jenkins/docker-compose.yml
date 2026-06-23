@@ -22,6 +22,8 @@ services:
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-ap-northeast-1}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - GITHUB_USER=${GITHUB_USER}
+      - SSH_PRIVATE_KEY=${SSH_PRIVATE_KEY}
+      - KUBECONFIG_CONTENT=${KUBECONFIG_CONTENT}
 
 volumes:
   jenkins_data:
