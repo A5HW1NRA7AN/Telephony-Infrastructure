@@ -2,13 +2,13 @@ provider "aws" {
   region = var.aws_region
 }
 
-# Get default VPC and subnets
-data "aws_default_vpc" "default" {}
+# Declare default VPC and subnets
+resource "aws_default_vpc" "default" {}
 
 data "aws_subnets" "default" {
   filter {
     name   = "vpc-id"
-    values = [data.aws_default_vpc.default.id]
+    values = [aws_default_vpc.default.id]
   }
 }
 
@@ -49,7 +49,7 @@ resource "local_sensitive_file" "private_key" {
 resource "aws_security_group" "jenkins_sg" {
   name        = "jenkins-server-sg"
   description = "Security Group for Jenkins Server"
-  vpc_id      = data.aws_default_vpc.default.id
+  vpc_id      = aws_default_vpc.default.id
 
   # Allow SSH
   ingress {
