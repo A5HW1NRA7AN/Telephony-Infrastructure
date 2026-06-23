@@ -89,6 +89,12 @@ resource "aws_instance" "jenkins" {
   subnet_id                   = tolist(data.aws_subnets.default.ids)[0]
   associate_public_ip_address = true
 
+  root_block_device {
+    volume_size           = 40
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
+
   # Pre-install Docker & Docker Compose
   user_data = <<-EOF
               #!/bin/bash
