@@ -61,7 +61,7 @@ jobs:
               git {
                 remote {
                   url('https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
-                  credentialsId('github-credentials')
+                  credentials('github-credentials')
                 }
                 branch('*/freeswitch')
               }
@@ -82,7 +82,7 @@ jobs:
               git {
                 remote {
                   url('https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
-                  credentialsId('github-credentials')
+                  credentials('github-credentials')
                 }
                 branch('*/freeswitch-kubernetes')
               }
@@ -103,7 +103,7 @@ jobs:
               git {
                 remote {
                   url('https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
-                  credentialsId('github-credentials')
+                  credentials('github-credentials')
                 }
                 branch('*/freeswitch-ivr-kubernetes')
               }
