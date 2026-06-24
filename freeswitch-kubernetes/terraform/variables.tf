@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "cluster_name" {
   description = "Prefix name for the resources"
   type        = string
-  default     = "freeswitch-telephony"
+  default     = "Freeswitch-Kube"
 }
 
 variable "vpc_cidr" {
@@ -25,7 +25,7 @@ variable "instance_type" {
 variable "key_name" {
   description = "Name for the auto-generated SSH key pair"
   type        = string
-  default     = "freeswitch-key-pair"
+  default     = "freeswitch-k8s-key-pair"
 }
 
 variable "sip_signalling_cidrs" {

@@ -116,6 +116,6 @@ resource "aws_instance" "jenkins" {
               EOF
 
   tags = {
-    Name = "jenkins-automation-server"
+    Name = "Jenkins"
   }
 }

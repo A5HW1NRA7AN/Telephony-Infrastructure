@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "cluster_name" {
   description = "Prefix name for the resources"
   type        = string
-  default     = "freeswitch-telephony"
+  default     = "Freeswitch-EC2"
 }
 
 variable "vpc_cidr" {

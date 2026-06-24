@@ -107,6 +107,8 @@ iptables -t nat -A PREROUTING -p udp --dport 5060 -j DNAT --to-destination $PRIV
 iptables -t nat -A PREROUTING -p tcp --dport 5060 -j DNAT --to-destination $PRIVATE_FS_IP:5060
 # RTP range (UDP 16384-32768)
 iptables -t nat -A PREROUTING -p udp --dport 16384:32768 -j DNAT --to-destination $PRIVATE_FS_IP
+# Kubernetes API (TCP 6443)
+iptables -t nat -A PREROUTING -p tcp --dport 6443 -j DNAT --to-destination $PRIVATE_FS_IP:6443
 
 # POSTROUTING Masquerade
 iptables -t nat -A POSTROUTING -j MASQUERADE
@@ -151,7 +153,7 @@ USERDATA
   }
 
   lifecycle {
-    ignore_changes = [key_name, associate_public_ip_address]
+    ignore_changes = [key_name, associate_public_ip_address, user_data]
   }
 }
 

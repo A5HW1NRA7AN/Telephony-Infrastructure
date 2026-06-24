@@ -38,6 +38,10 @@ resource "aws_security_group" "bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = {
     Name = "${var.cluster_name}-bastion-sg"
   }
@@ -102,6 +106,10 @@ resource "aws_security_group" "proxy_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = {
     Name = "${var.cluster_name}-proxy-sg"
   }
@@ -142,6 +150,10 @@ resource "aws_security_group" "freeswitch_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   tags = {

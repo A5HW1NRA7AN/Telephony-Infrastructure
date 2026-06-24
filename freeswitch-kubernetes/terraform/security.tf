@@ -38,6 +38,10 @@ resource "aws_security_group" "bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = {
     Name = "${var.cluster_name}-bastion-sg"
   }
@@ -72,6 +76,14 @@ resource "aws_security_group" "proxy_sg" {
     cidr_blocks = var.allowed_http_ingress_cidrs
   }
 
+  # Allow access to Kubernetes API server forwarded via Proxy
+  ingress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_http_ingress_cidrs
+  }
+
   # Inbound SIP signalling from Twilio
   ingress {
     from_port   = 5060
@@ -100,6 +112,10 @@ resource "aws_security_group" "proxy_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   tags = {
@@ -142,6 +158,10 @@ resource "aws_security_group" "freeswitch_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   tags = {
