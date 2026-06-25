@@ -75,7 +75,61 @@ To run Jenkins:
 
 ---
 
-## ECR IAM Role Authentication
+## ECR Registry Authentication
 
-The private FreeSWITCH instance is launched with the IAM instance profile `EC2-ECR-Read-Role`. This enables Docker or Kubernetes (containerd) to authenticate and pull private images from Amazon ECR directly without requiring local Docker login configurations or Kubernetes registry secrets.
+- **EC2 Standalone Environment**: The private FreeSWITCH instance is launched with the IAM instance profile `EC2-ECR-Read-Role` which automatically logs the Docker daemon into Amazon ECR.
+- **Kubernetes Environment**: The Kubelet pulls private ECR images using a Kubernetes Image Pull Secret named `regcred`. This secret is automatically refreshed and updated in the default namespace during every Jenkins deployment via the pipeline (`Jenkinsfile`), eliminating the need to manage it manually.
+
+---
+
+## Operational Administration Guide (Agnostic CLI Reference)
+
+To support team sharing and tool-agnostic operations, no custom local `.sh` wrapper scripts are required. All administrative actions are executed using standard native commands.
+
+### 1. Download Kubeconfig securely
+To fetch the cluster `admin.conf` and configure your local `kubectl` to access the cluster securely via the Nginx NAT Proxy:
+```bash
+# 1. Fetch admin.conf from the master node (10.0.1.143) through the Bastion jump host
+ssh -i ./freeswitch-key.pem -o StrictHostKeyChecking=no \
+  -o ProxyCommand="ssh -i ./freeswitch-key.pem -o StrictHostKeyChecking=no -W %h:%p ubuntu@<BASTION_PUBLIC_IP>" \
+  ubuntu@10.0.1.143 "sudo cat /etc/kubernetes/admin.conf" > kubeconfig.yaml
+
+# 2. Modify the API Server endpoint to point to the Proxy public EIP
+sed -i "s/127.0.0.1:6443/<PROXY_PUBLIC_IP>:6443/g" kubeconfig.yaml
+
+# 3. Export for kubectl usage (with full TLS verification enabled)
+export KUBECONFIG=$(pwd)/kubeconfig.yaml
+```
+
+### 2. Verify Infrastructure & System Status
+To check the running status of your environments natively:
+```bash
+# Check Kubernetes Cluster Nodes & Pods
+kubectl get nodes -o wide
+kubectl get pods -A
+
+# Check Standalone EC2 FreeSWITCH Containers (via Bastion tunnel)
+ssh -i ./freeswitch-key.pem \
+  -o ProxyCommand="ssh -i ./freeswitch-key.pem -W %h:%p ubuntu@<BASTION_PUBLIC_IP>" \
+  ubuntu@10.0.1.143 "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Image}}'"
+
+# Check Jenkins CI/CD Status
+# Send a query to the Jenkins API to check jobs
+curl -s -u "<JENKINS_USER>:<JENKINS_API_TOKEN>" "http://<JENKINS_PUBLIC_IP>:8080/api/json"
+```
+
+### 3. Regenerate Kubernetes API Certificates (Add new Proxy EIP to SANs)
+If the Proxy IP changes or is regenerated, you must update the certificate SANs so that `kubectl` can verify the TLS connection securely:
+1. Update `supplementary_addresses_in_ssl_keys: [ "<NEW_PROXY_PUBLIC_IP>" ]` in `/home/rajan/Projects/kubespray/inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml`.
+2. Run the Kubespray certificate playbook from the Kubespray root directory:
+```bash
+ansible-playbook -i inventory/mycluster/hosts.yaml --become --become-user=root cluster.yml --tags=certs
+```
+
+### 4. Reload Jenkins Configuration-as-Code (JCasC)
+To trigger an immediate reload of Jenkins JCasC settings after updating remote credentials:
+```bash
+curl -X POST -u "<JENKINS_USER>:<JENKINS_API_TOKEN>" "http://<JENKINS_PUBLIC_IP>:8080/configuration-as-code/reload"
+```
+
 
