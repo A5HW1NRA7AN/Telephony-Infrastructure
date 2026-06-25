@@ -51,6 +51,8 @@ all:
       ip: $PRIVATE_IP
       access_ip: $PRIVATE_IP
       ansible_connection: local
+  vars:
+    supplementary_addresses_in_ssl_keys: [ "$PROXY_IP" ]
   children:
     kube_control_plane:
       hosts:

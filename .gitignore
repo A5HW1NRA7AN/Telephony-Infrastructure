@@ -15,10 +15,11 @@ override.tf.json
 .env
 
 # --- Dynamic environment files ---
-terraform/env.sh
-terraform/hosts_k8s.yaml
-kubespray/env.sh
-kubespray/hosts_k8s.yaml
+**/env.sh
+**/hosts_k8s.yaml
+**/tfplan
+scratch_kubeconfig
+**/.terraform.lock.hcl
 
 # --- Built Artifacts ---
 *.tar

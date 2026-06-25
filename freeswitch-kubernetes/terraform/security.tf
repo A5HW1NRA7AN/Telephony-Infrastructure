@@ -81,7 +81,7 @@ resource "aws_security_group" "proxy_sg" {
     from_port   = 6443
     to_port     = 6443
     protocol    = "tcp"
-    cidr_blocks = var.allowed_http_ingress_cidrs
+    cidr_blocks = var.allowed_k8s_api_cidrs
   }
 
   # Inbound SIP signalling from Twilio
@@ -137,20 +137,101 @@ resource "aws_security_group" "freeswitch_sg" {
     security_groups = [aws_security_group.bastion_sg.id]
   }
 
-  # All TCP and UDP traffic from Proxy (covers HTTP reverse proxying and forwarded SIP/RTP)
+  # SIP Signalling (UDP 5060) from Proxy
   ingress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
+    from_port       = 5060
+    to_port         = 5060
+    protocol        = "udp"
     security_groups = [aws_security_group.proxy_sg.id]
   }
 
-  # Full communication within VPC subnets
+  # SIP Signalling (TCP 5060) from Proxy
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port       = 5060
+    to_port         = 5060
+    protocol        = "tcp"
+    security_groups = [aws_security_group.proxy_sg.id]
+  }
+
+  # RTP Media (UDP 16384-32768) from Proxy
+  ingress {
+    from_port       = 16384
+    to_port         = 32768
+    protocol        = "udp"
+    security_groups = [aws_security_group.proxy_sg.id]
+  }
+
+  # Kubernetes API (TCP 6443) from Proxy
+  ingress {
+    from_port       = 6443
+    to_port         = 6443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.proxy_sg.id]
+  }
+
+  # HTTP Ingest / Services (TCP 8080, 5050) from Proxy
+  ingress {
+    from_port       = 5050
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.proxy_sg.id]
+  }
+
+  # K8s Node Internal Communication (Calico CNI, Kubelet, DNS) within VPC
+  ingress {
+    from_port   = 179
+    to_port     = 179
+    protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
+    description = "Calico BGP"
+  }
+
+  ingress {
+    from_port   = 4789
+    to_port     = 4789
+    protocol    = "udp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "Calico VXLAN"
+  }
+
+  ingress {
+    from_port   = 10250
+    to_port     = 10250
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "Kubelet API"
+  }
+
+  ingress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "CoreDNS UDP"
+  }
+
+  ingress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "CoreDNS TCP"
+  }
+
+  ingress {
+    from_port   = 30000
+    to_port     = 32767
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "K8s NodePorts TCP"
+  }
+
+  ingress {
+    from_port   = 30000
+    to_port     = 32767
+    protocol    = "udp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "K8s NodePorts UDP"
   }
 
   egress {

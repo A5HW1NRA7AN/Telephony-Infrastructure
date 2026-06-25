@@ -56,3 +56,9 @@ variable "allowed_http_ingress_cidrs" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
+
+variable "allowed_k8s_api_cidrs" {
+  description = "List of CIDR blocks allowed to access Kubernetes API (port 6443). Restrict to VPN or management workstation IP."
+  type        = list(string)
+  default     = ["0.0.0.0/0"] # Can be overridden in tfvars to restrict access securely
+}

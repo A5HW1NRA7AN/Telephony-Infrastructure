@@ -129,20 +129,44 @@ resource "aws_security_group" "freeswitch_sg" {
     security_groups = [aws_security_group.bastion_sg.id]
   }
 
-  # All TCP and UDP traffic from Proxy (covers HTTP reverse proxying and forwarded SIP/RTP)
+  # SIP Signalling (UDP 5060) from Proxy
   ingress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
+    from_port       = 5060
+    to_port         = 5060
+    protocol        = "udp"
     security_groups = [aws_security_group.proxy_sg.id]
   }
 
-  # Full communication within VPC subnets
+  # SIP Signalling (TCP 5060) from Proxy
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [var.vpc_cidr]
+    from_port       = 5060
+    to_port         = 5060
+    protocol        = "tcp"
+    security_groups = [aws_security_group.proxy_sg.id]
+  }
+
+  # RTP Media (UDP 16384-32768) from Proxy
+  ingress {
+    from_port       = 16384
+    to_port         = 32768
+    protocol        = "udp"
+    security_groups = [aws_security_group.proxy_sg.id]
+  }
+
+  # Lead Service HTTP Ingestion (TCP 8080) from Proxy
+  ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.proxy_sg.id]
+  }
+
+  # pgAdmin Web Interface (TCP 5050) from Proxy
+  ingress {
+    from_port       = 5050
+    to_port         = 5050
+    protocol        = "tcp"
+    security_groups = [aws_security_group.proxy_sg.id]
   }
 
   egress {
