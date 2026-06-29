@@ -60,7 +60,7 @@ jobs:
             scm {
               git {
                 remote {
-                  url('https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
+                  url(System.getenv('TELEPHONY_REPO_URL') ?: 'https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
                   credentials('github-credentials')
                 }
                 branch('*/freeswitch')
@@ -81,7 +81,7 @@ jobs:
             scm {
               git {
                 remote {
-                  url('https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
+                  url(System.getenv('TELEPHONY_REPO_URL') ?: 'https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
                   credentials('github-credentials')
                 }
                 branch('*/freeswitch-kubernetes')
@@ -102,7 +102,7 @@ jobs:
             scm {
               git {
                 remote {
-                  url('https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
+                  url(System.getenv('TELEPHONY_REPO_URL') ?: 'https://github.com/' + System.getenv('GITHUB_USER') + '/Telephony.git')
                   credentials('github-credentials')
                 }
                 branch('*/freeswitch-ivr-kubernetes')
